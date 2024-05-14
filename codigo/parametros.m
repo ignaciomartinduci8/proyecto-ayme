@@ -116,7 +116,7 @@
     Temp_amb = 40; % [-55]   
 
     % Temperatura de referencia para el cobre [ºC]
-    Temp_s_ref = 40;
+    Temp_s_ref = 50;
 
     % Resistencia del estator a una temperatura dada [ºC]
     R_s = R_s_40 + alpha_cu * Temp_amb;
