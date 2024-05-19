@@ -120,14 +120,10 @@ clc;clear;close all;
     % Temperatura de referencia para el cobre [ºC]
     Temp_s_ref = 40;
 
-    % Resistencia del estator a una temperatura dada [ºC]
-    R_s = R_s_40 + alpha_cu * Temp_amb;
-
     % Torque motor [N.m]
     T_m = 0;
 
     
-
 %% ======== Inversor trifásico ======== %%
 
     % Ángulo eléctrico de voltaje [rad]
