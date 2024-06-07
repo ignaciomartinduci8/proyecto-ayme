@@ -5,7 +5,7 @@ clc;clear;close all;
     % Coeficiente de fricción viscosa en articulación [N.m/(rad/s)]
     b_l = 0.1; % [+- 0.03] 
     
-    % Aceleración de la gravedad [m/s^2]
+    % % Aceleración de la gravedad [m/s^2]
     g = 9.80665; 
     
     % Masa del brazo manipulador [kg]
