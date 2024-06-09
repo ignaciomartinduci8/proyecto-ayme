@@ -52,7 +52,7 @@ clc;clear;close all;
   
 
 %% ======== Máquina Eléctrica ======== %%
-
+    
     % Momento de inercia motor + caja [kg.m^2]
     J_m = 1.4 * 10^-5; % [+- 1%]
     
