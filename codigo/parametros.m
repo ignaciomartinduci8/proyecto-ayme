@@ -153,6 +153,10 @@ clc;clear;close all;
     b_eq = b_m + (1/r^2) * b_l;
 
 
+%% ======== VALORES DE OBSERVADOR ========  %%
+
+    K_e_theta = 64*10^2;
+    K_e_omega = 10.64*10^6;
     
 
 
