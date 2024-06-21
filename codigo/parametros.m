@@ -30,7 +30,7 @@ clc;clear;close all;
     k_l = m * g * l_cm + m_l * g * l_l; % Afectado por incertidumbre
 
     % Torque de perturbación [N.m]
-    T_per = 0; % [+- 5.0]
+    % T_per = 0; % [+- 5.0]
 
 
 %% ======== Tren de Transmisión ======== %%
@@ -39,16 +39,16 @@ clc;clear;close all;
     r = 120;
 
     % Velocidad nominal a la salida [rpm]
-    n_l_nom = 60.0;
+    % n_l_nom = 60.0;
 
     % Velocidad nominal a la salida [rad/s]
-    w_l_nom = 6.28; 
+    % w_l_nom = 6.28; 
 
     % Torque de saldia nominal [N.m]
-    T_q_nom = 17.0;
+    % T_q_nom = 17.0;
 
     % Torque de salida máximo [N.m]
-    T_q_max = 45.0;
+    % T_q_max = 45.0;
   
 
 %% ======== Máquina Eléctrica ======== %%
@@ -79,7 +79,7 @@ clc;clear;close all;
     R_s_40 = 1.02; % [+- 1%]
 
     % Resistencia de estator, por fase a 115ºC [Ohm]
-    R_s_115 = 1.32; % [+- 1%]
+    % R_s_115 = 1.32; % [+- 1%]
 
     % Coeficiente de aumento de R_s con Temp_s [1/ºC]
     alpha_cu = 3.9 *10^-3;
@@ -94,25 +94,25 @@ clc;clear;close all;
     tao_ts_amb = R_ts_amb * C_ts;
 
     % Velocidad nominal del rotor [rpm]
-    n_m_nom = 6600;
+    % n_m_nom = 6600;
 
     % Velocidad nominal del rotor [rad/s]
-    w_m_nom = 691.15;
+    % w_m_nom = 691.15;
 
     % Tensión nominal de línea, corriente alterna eficaz.[V_ca_rms]
-    V_sl_nom = 24;
+    % V_sl_nom = 24;
 
     % Tensión nominal de línea, corriente alterna eficaz.[V_ca_rms]
-    V_sf_nom = V_sl_nom / sqrt(3);
+    % V_sf_nom = V_sl_nom / sqrt(3);
 
     % Corriente nominal en régimen continuo [A_ca_rms]
-    I_s_nom = 0.4;
+    % I_s_nom = 0.4;
 
     % Corriente máxima de pico [A_ca_rms]
-    I_s_max = 2.0;
+    % I_s_max = 2.0;
 
     % Temperatura máxima del bobinado del estator [ºC]
-    Temp_s_max = 115.0;
+    % Temp_s_max = 115.0;
 
     % Rango de temperatura ambiente de operación [ºC]
     Temp_amb = 40; % [-55]   
@@ -121,27 +121,27 @@ clc;clear;close all;
     Temp_s_ref = 40;
 
     % Torque motor [N.m]
-    T_m = 0;
+    %T_m = 0;
 
     
 %% ======== Inversor trifásico ======== %%
 
     % Ángulo eléctrico de voltaje [rad]
-    theta_ev = 0;
+    % theta_ev = 0;
 
     % Tensión de línea [V_ca_rms]
-    V_sl = 24; % [-24]
+    % V_sl = 24; % [-24]
 
     % Frecuencia sincrónica [Hz]
-    f_e = 330; % [-660]
+    % f_e = 330; % [-660]
 
     % Frecuencia angular sincrónica [rad/s]
-    w_e = f_e * 2 * pi;
+    % w_e = f_e * 2 * pi;
 
     % Tensiones de fase [V_ca]
-    V_as = sqrt(2) * V_sl / sqrt(3) * cos(theta_ev);
-    V_bs = sqrt(2) * V_sl / sqrt(3) * cos(theta_ev - 2/3 * pi);
-    V_cs = sqrt(2) * V_sl / sqrt(3) * cos(theta_ev + 2/3 * pi);
+    % V_as = sqrt(2) * V_sl / sqrt(3) * cos(theta_ev);
+    % V_bs = sqrt(2) * V_sl / sqrt(3) * cos(theta_ev - 2/3 * pi);
+    % V_cs = sqrt(2) * V_sl / sqrt(3) * cos(theta_ev + 2/3 * pi);
 
    
 %% ======== Relaciones de la resolución ======== %%
@@ -153,11 +153,59 @@ clc;clear;close all;
     b_eq = b_m + (1/r^2) * b_l;
 
 
-%% ======== VALORES DE OBSERVADOR ========  %%
+%% ======== Observador ======== %%
 
-    K_e_theta = 64*10^2;
-    K_e_omega = 10.64*10^6;
-    
+% K_e_theta = 6400;
+% K_e_omega = 3200^2;
+
+%% ======== Mejora del observador ======= %%
+
+K_e_theta = 9600;
+K_e_omega = 3*3200^2;
+K_e_int = 3200 ^3;
 
 
-    
+%% ======== PID ======== %%
+n=2.5;
+omega_pos=800;
+
+ba= J_eq*n*omega_pos;
+Ksa= J_eq*n*(omega_pos^2);
+Ksia= J_eq*(omega_pos^3);
+
+
+%% ===== SS Sensores ====== %%
+
+omega_n_corrientes = 18000;
+omega_n_posicion = 6000;
+
+A_corrientes = [0 1; -omega_n_corrientes^2 -2*omega_n_corrientes];
+B_corrientes = [0; omega_n_corrientes^2];
+C_corrientes = [1 0];
+x0_corrientes = [0;0];
+
+A_posicion = [0 1; -omega_n_posicion^2 -2*omega_n_posicion];
+B_posicion = [0; omega_n_posicion^2];
+C_posicion = [1 0];
+x0_posicion = [0; 0];
+
+A_temp = -1/20;
+B_temp = 1/20;
+C_temp = 1;
+x0_temp = 40;
+
+
+%% ====== SS Inversor ===== %%
+
+omega_n_inversor = 6000;
+
+A_inversor = [0 1; -omega_n_inversor^2 -2*omega_n_inversor];
+B_inversor = [0; omega_n_inversor^2];
+C_inversor = [1 0];
+x0_inversor = [0;0];
+
+
+%% ======= Discretización ======== %%
+
+f_sample = 22050;
+T_sample = 1/f_sample;
